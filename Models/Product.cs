@@ -1,14 +1,18 @@
+using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Runtime.CompilerServices;
 
 namespace Web.Models
 {
+    [Index(nameof(Name), IsUnique = true)]
     public class Product
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public long ProductId { get; set; }
         [Required]
+       
         public string Name { get; set; }
         [Required]
         public string Manufacturer { get; set; }

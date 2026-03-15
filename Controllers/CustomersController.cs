@@ -9,9 +9,22 @@ namespace Web.Controllers
     public class CustomersController(ICustomers customers) : ControllerBase
     {
         [HttpGet]
-        public async Task<IEnumerable<Customer>> Get()
+        public async Task<PagedResult<Customer>> Get(
+            [FromQuery] int page = 0,
+            [FromQuery] int count = 20,
+            [FromQuery] string? search = null,
+            [FromQuery] string? phone = null,
+            [FromQuery] string? sortBy = null,
+            [FromQuery] bool ascending = true)
         {
-            return await customers.Get();
+            count = Math.Min(count, 50);
+            var (items, totalCount) = await customers.Get(page, count, search, phone, sortBy, ascending);
+            return new PagedResult<Customer>
+            {
+                Items = items,
+                Count = totalCount,
+                Cursor = (page + 1) * count < totalCount ? page + 1 : null
+            };
         }
 
         [HttpGet("{id}")]

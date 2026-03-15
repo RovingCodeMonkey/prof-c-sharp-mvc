@@ -12,6 +12,30 @@ public class AppDbContext : DbContext
         public DbSet<Discount> Discounts { get; set; }
         public DbSet<Sale> Sales { get; set; }
         public DbSet<SalesPerson> SalesPersons { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            //If switching database types these need to be updated!!!!!
+            modelBuilder.Entity<Product>()
+                .Property(e => e.Name)
+                .HasColumnType("TEXT COLLATE NOCASE"); //
+            modelBuilder.Entity<Customer>()
+                .Property(e => e.FirstName)
+                .HasColumnType("TEXT COLLATE NOCASE"); //
+            modelBuilder.Entity<Customer>()
+                .Property(e => e.LastName)
+                .HasColumnType("TEXT COLLATE NOCASE"); //
+            modelBuilder.Entity<SalesPerson>()
+                .Property(e => e.FirstName)
+                .HasColumnType("TEXT COLLATE NOCASE"); //
+            modelBuilder.Entity<SalesPerson>()
+              .Property(e => e.LastName)
+              .HasColumnType("TEXT COLLATE NOCASE"); //
+            modelBuilder.Entity<SalesPerson>()
+              .Property(e => e.Manager)
+              .HasColumnType("TEXT COLLATE NOCASE"); //
+        }
+
     }
 }
 

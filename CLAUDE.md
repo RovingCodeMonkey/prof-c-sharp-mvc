@@ -28,6 +28,7 @@ OpenAPI docs available at `/openapi/v1.json` in Development.
 
 This is an **ASP.NET Core Web API** project targeting **.NET 10** with a minimal MVC structure:
 
+We follow Clean Architecture and SOLID principles
 - **`Program.cs`** — App entry point. Registers services (controllers, OpenAPI, EF Core) and configures middleware pipeline.
 - **`Models/`** — EF Core entity classes with `[Key]`, `[Required]` data annotations.
 - **`Data/AppDbContext.cs`** — EF Core `DbContext`. Add new `DbSet<T>` properties here when creating new entities.
