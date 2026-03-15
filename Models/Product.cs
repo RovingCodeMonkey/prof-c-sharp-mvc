@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Runtime.CompilerServices;
+using Web.Data;
 
 namespace Web.Models
 {
@@ -24,7 +25,5 @@ namespace Web.Models
         public double SalePrice { get; set; }
         public int QtyOnHand { get; set; }
         public double CommisionPercentage { get; set; }
-
-
     }
 }

@@ -27,6 +27,14 @@ namespace Web.Controllers
             };
         }
 
+        [HttpGet("available")]
+        public async Task<ActionResult<IEnumerable<Discount>>> GetAvailable(
+            [FromQuery] long productId,
+            [FromQuery] DateTime date)
+        {
+            return Ok(await discounts.GetAvailable(productId, date));
+        }
+
         [HttpGet("{id}")]
         public async Task<ActionResult<Discount>> Get(int id)
         {

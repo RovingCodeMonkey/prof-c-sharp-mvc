@@ -31,6 +31,14 @@ namespace Web.Data
             return (items, totalCount);
         }
 
+        public async Task<IEnumerable<Models.Discount>> GetAvailable(long productId, DateTime date)
+        {
+            return await _context.Discounts
+                .Include(d => d.Product)
+                .Where(d => d.ProductId == productId && d.BeginDate <= date && d.EndDate >= date)
+                .ToListAsync();
+        }
+
         public async Task<Models.Discount?> Get(int id)
         {
             return await _context.Discounts.Include(d => d.Product).Where(d => d.DiscountId == id).FirstOrDefaultAsync();

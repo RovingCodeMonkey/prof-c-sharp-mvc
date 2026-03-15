@@ -18,6 +18,7 @@ namespace Web.Models
         public string Address { get; set; }
         [Required]
         public string Phone { get; set; }
+        [Required]
         public DateTime StartDate { get; set; }
         public DateTime? TerminationDate { get; set; }
 

@@ -10,9 +10,11 @@ namespace Web.Models
         public long DiscountId { get; set; }
         [Required]
         public long ProductId { get; set; }
-
+        [Required]
         public DateTime BeginDate { get; set; }
+        [Required]
         public DateTime EndDate { get; set; }
+        [Required]
         public double DiscountPercentage { get; set; }
 
         [ForeignKey("ProductId")]
