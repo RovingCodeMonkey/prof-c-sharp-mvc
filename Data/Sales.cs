@@ -10,7 +10,7 @@ namespace Web.Data
             this._context = context;
         }
 
-        public async Task<(IEnumerable<Models.Sale> Items, int TotalCount)> Get(int page, int count, long? productId, long? salesPersonId, long? customerId, string? sortBy, bool ascending)
+        public async Task<(IEnumerable<Models.Sale> Items, int TotalCount)> Get(int page, int count, long? productId, long? salesPersonId, long? customerId, DateTime? startDate, DateTime? endDate, string? sortBy, bool ascending)
         {
             var query = _context.Sales
                 .Include(s => s.Product)
@@ -26,6 +26,12 @@ namespace Web.Data
 
             if (customerId.HasValue)
                 query = query.Where(s => s.CustomerId == customerId.Value);
+
+            if (startDate.HasValue)
+                query = query.Where(s => s.SalesDate >= startDate.Value);
+
+            if (endDate.HasValue)
+                query = query.Where(s => s.SalesDate <= endDate.Value);
 
             query = (sortBy?.ToLower()) switch
             {
@@ -43,7 +49,12 @@ namespace Web.Data
 
         public async Task<Models.Sale?> Get(int id)
         {
-            return await _context.Sales.Where(s => s.SalesId == id).FirstOrDefaultAsync();
+            return await _context.Sales
+                .Include(s => s.Product)
+                .Include(s => s.SalesPerson)
+                .Include(s => s.Customer)
+                .Where(s => s.SalesId == id)
+                .FirstOrDefaultAsync();
         }
 
         public async Task<Models.Sale> Create(Models.Sale sale)

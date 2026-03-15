@@ -8,7 +8,7 @@ namespace Web.Models
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public long DiscountId { get; set; }
-        
+        [Required]
         public long ProductId { get; set; }
 
         public DateTime BeginDate { get; set; }
@@ -16,6 +16,6 @@ namespace Web.Models
         public double DiscountPercentage { get; set; }
 
         [ForeignKey("ProductId")]
-        public virtual required Product Product { get; set; }
+        public virtual Product? Product { get; set; }
     }
 }

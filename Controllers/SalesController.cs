@@ -16,11 +16,13 @@ namespace Web.Controllers
             [FromQuery] long? productId = null,
             [FromQuery] long? salesPersonId = null,
             [FromQuery] long? customerId = null,
+            [FromQuery] DateTime? startDate = null,
+            [FromQuery] DateTime? endDate = null,
             [FromQuery] string? sortBy = null,
             [FromQuery] bool ascending = true)
         {
             count = Math.Min(count, pagingSettings.Value.MaxPageSize);
-            var (items, totalCount) = await sales.Get(page, count, productId, salesPersonId, customerId, sortBy, ascending);
+            var (items, totalCount) = await sales.Get(page, count, productId, salesPersonId, customerId, startDate, endDate, sortBy, ascending);
             return new PagedResult<Sale>
             {
                 Items = items,

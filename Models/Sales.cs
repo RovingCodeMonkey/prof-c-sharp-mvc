@@ -15,12 +15,12 @@ namespace Web.Models
         public DateTime SalesDate { get; set; }
 
         [ForeignKey("ProductId")]
-        public virtual required Product Product { get; set; }        
+        public virtual Product? Product { get; set; }        
 
         [ForeignKey("SalesPersonId")]
-        public virtual required SalesPerson SalesPerson { get; set; }
+        public virtual SalesPerson? SalesPerson { get; set; }
 
         [ForeignKey("CustomerId")]
-        public virtual required Customer Customer { get; set; }
+        public virtual Customer? Customer { get; set; }
     }
 }
