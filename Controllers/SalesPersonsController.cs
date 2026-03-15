@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using Web.Data;
 using Web.Models;
 
@@ -6,12 +7,25 @@ namespace Web.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class SalesPersonsController(ISalesPersons salesPersons) : ControllerBase
+    public class SalesPersonsController(ISalesPersons salesPersons, IOptions<PagingSettings> pagingSettings) : ControllerBase
     {
         [HttpGet]
-        public async Task<IEnumerable<SalesPerson>> Get()
+        public async Task<PagedResult<SalesPerson>> Get(
+            [FromQuery] int page = 0,
+            [FromQuery] int count = 20,
+            [FromQuery] string? search = null,
+            [FromQuery] string? phone = null,
+            [FromQuery] string? sortBy = null,
+            [FromQuery] bool ascending = true)
         {
-            return await salesPersons.Get();
+            count = Math.Min(count, pagingSettings.Value.MaxPageSize);
+            var (items, totalCount) = await salesPersons.Get(page, count, search, phone, sortBy, ascending);
+            return new PagedResult<SalesPerson>
+            {
+                Items = items,
+                Count = totalCount,
+                Cursor = (page + 1) * count < totalCount ? page + 1 : null
+            };
         }
 
         [HttpGet("{id}")]

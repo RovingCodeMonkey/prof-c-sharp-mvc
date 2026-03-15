@@ -10,14 +10,30 @@ namespace Web.Data
             this._context = context;
         }
 
-        public async Task<IEnumerable<Models.Discount>> Get()
+        public async Task<(IEnumerable<Models.Discount> Items, int TotalCount)> Get(int page, int count, string? search, string? sortBy, bool ascending)
         {
-            return await _context.Discounts.ToListAsync();
+            var query = _context.Discounts.Include(d => d.Product).AsQueryable();
+
+            if (!string.IsNullOrEmpty(search))
+                query = query.Where(d => EF.Functions.Like(d.Product.Name, search + "%"));
+
+            query = (sortBy?.ToLower()) switch
+            {
+                "productname"        => ascending ? query.OrderBy(d => d.Product.Name)        : query.OrderByDescending(d => d.Product.Name),
+                "begindate"          => ascending ? query.OrderBy(d => d.BeginDate)           : query.OrderByDescending(d => d.BeginDate),
+                "enddate"            => ascending ? query.OrderBy(d => d.EndDate)             : query.OrderByDescending(d => d.EndDate),
+                "discountpercentage" => ascending ? query.OrderBy(d => d.DiscountPercentage)  : query.OrderByDescending(d => d.DiscountPercentage),
+                _                    => query.OrderBy(d => d.Product.Name),
+            };
+
+            var totalCount = await query.CountAsync();
+            var items = await query.Skip(page * count).Take(count).ToListAsync();
+            return (items, totalCount);
         }
 
         public async Task<Models.Discount?> Get(int id)
         {
-            return await _context.Discounts.Where(d => d.DiscountId == id).FirstOrDefaultAsync();
+            return await _context.Discounts.Include(d => d.Product).Where(d => d.DiscountId == id).FirstOrDefaultAsync();
         }
 
         public async Task<Models.Discount> Create(Models.Discount discount)

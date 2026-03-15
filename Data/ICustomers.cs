@@ -6,7 +6,7 @@ namespace Web.Data
     {
         Task<Customer> Create(Customer customer);
         Task Delete(int id);
-        Task<IEnumerable<Customer>> Get();
+        Task<(IEnumerable<Customer> Items, int TotalCount)> Get(int page, int count, string? search, string? phone, string? sortBy, bool ascending);
         Task<Customer?> Get(int id);
         Task Update(Customer customer);
     }

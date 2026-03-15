@@ -11,7 +11,7 @@ using Web.Data;
 namespace Web.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260314220022_Initial")]
+    [Migration("20260315171544_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -32,11 +32,11 @@ namespace Web.Migrations
 
                     b.Property<string>("FirstName")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("TEXT COLLATE NOCASE");
 
                     b.Property<string>("LastName")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("TEXT COLLATE NOCASE");
 
                     b.Property<string>("Phone")
                         .IsRequired()
@@ -90,7 +90,7 @@ namespace Web.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("TEXT COLLATE NOCASE");
 
                     b.Property<double>("PurchasePrice")
                         .HasColumnType("REAL");
@@ -106,6 +106,9 @@ namespace Web.Migrations
                         .HasColumnType("TEXT");
 
                     b.HasKey("ProductId");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
 
                     b.ToTable("Products");
                 });
@@ -151,15 +154,15 @@ namespace Web.Migrations
 
                     b.Property<string>("FirstName")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("TEXT COLLATE NOCASE");
 
                     b.Property<string>("LastName")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("TEXT COLLATE NOCASE");
 
                     b.Property<string>("Manager")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("TEXT COLLATE NOCASE");
 
                     b.Property<string>("Phone")
                         .IsRequired()
@@ -172,6 +175,9 @@ namespace Web.Migrations
                         .HasColumnType("TEXT");
 
                     b.HasKey("SalesPersonId");
+
+                    b.HasIndex("FirstName", "LastName", "Phone")
+                        .IsUnique();
 
                     b.ToTable("SalesPersons");
                 });

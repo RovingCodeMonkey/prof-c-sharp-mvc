@@ -11,9 +11,29 @@ namespace Web.Data
             this._context = context;
         }    
 
-        public async Task<IEnumerable<Models.Product>> Get()
+        public async Task<(IEnumerable<Models.Product> Items, int TotalCount)> Get(int page, int count, string? search, string? sortBy, bool ascending)
         {
-            return await _context.Products.ToListAsync();
+            var query = _context.Products.AsQueryable();
+
+            //Using a starts with query so that the index can be used not a table scan
+            if (!string.IsNullOrEmpty(search))
+                query = query.Where(p => EF.Functions.Like(p.Name, search + "%"));
+
+            query = (sortBy?.ToLower()) switch
+            {
+                "name"                => ascending ? query.OrderBy(p => p.Name)                : query.OrderByDescending(p => p.Name),
+                "manufacturer"        => ascending ? query.OrderBy(p => p.Manufacturer)        : query.OrderByDescending(p => p.Manufacturer),
+                "style"               => ascending ? query.OrderBy(p => p.Style)               : query.OrderByDescending(p => p.Style),
+                "purchaseprice"       => ascending ? query.OrderBy(p => p.PurchasePrice)       : query.OrderByDescending(p => p.PurchasePrice),
+                "saleprice"           => ascending ? query.OrderBy(p => p.SalePrice)           : query.OrderByDescending(p => p.SalePrice),
+                "qtyonhand"           => ascending ? query.OrderBy(p => p.QtyOnHand)           : query.OrderByDescending(p => p.QtyOnHand),
+                "commisionpercentage" => ascending ? query.OrderBy(p => p.CommisionPercentage) : query.OrderByDescending(p => p.CommisionPercentage),
+                _                     => query.OrderBy(p => p.Name),
+            };
+
+            var totalCount = await query.CountAsync();
+            var items = await query.Skip(page * count).Take(count).ToListAsync();
+            return (items, totalCount);
         }
 
         public async Task<Models.Product?> Get(int id)

@@ -17,8 +17,8 @@ namespace Web.Migrations
                 {
                     CustomerId = table.Column<long>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    FirstName = table.Column<string>(type: "TEXT", nullable: false),
-                    LastName = table.Column<string>(type: "TEXT", nullable: false),
+                    FirstName = table.Column<string>(type: "TEXT COLLATE NOCASE", nullable: false),
+                    LastName = table.Column<string>(type: "TEXT COLLATE NOCASE", nullable: false),
                     Address = table.Column<string>(type: "TEXT", nullable: false),
                     Phone = table.Column<string>(type: "TEXT", nullable: false),
                     StartDate = table.Column<DateTime>(type: "TEXT", nullable: false)
@@ -34,7 +34,7 @@ namespace Web.Migrations
                 {
                     ProductId = table.Column<long>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    Name = table.Column<string>(type: "TEXT", nullable: false),
+                    Name = table.Column<string>(type: "TEXT COLLATE NOCASE", nullable: false),
                     Manufacturer = table.Column<string>(type: "TEXT", nullable: false),
                     Style = table.Column<string>(type: "TEXT", nullable: false),
                     PurchasePrice = table.Column<double>(type: "REAL", nullable: false),
@@ -53,13 +53,13 @@ namespace Web.Migrations
                 {
                     SalesPersonId = table.Column<long>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    FirstName = table.Column<string>(type: "TEXT", nullable: false),
-                    LastName = table.Column<string>(type: "TEXT", nullable: false),
+                    FirstName = table.Column<string>(type: "TEXT COLLATE NOCASE", nullable: false),
+                    LastName = table.Column<string>(type: "TEXT COLLATE NOCASE", nullable: false),
                     Address = table.Column<string>(type: "TEXT", nullable: false),
                     Phone = table.Column<string>(type: "TEXT", nullable: false),
                     StartDate = table.Column<DateTime>(type: "TEXT", nullable: false),
                     TerminationDate = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    Manager = table.Column<string>(type: "TEXT", nullable: false)
+                    Manager = table.Column<string>(type: "TEXT COLLATE NOCASE", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -128,6 +128,12 @@ namespace Web.Migrations
                 column: "ProductId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Products_Name",
+                table: "Products",
+                column: "Name",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Sales_CustomerId",
                 table: "Sales",
                 column: "CustomerId");
@@ -141,6 +147,12 @@ namespace Web.Migrations
                 name: "IX_Sales_SalesPersonId",
                 table: "Sales",
                 column: "SalesPersonId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SalesPersons_FirstName_LastName_Phone",
+                table: "SalesPersons",
+                columns: new[] { "FirstName", "LastName", "Phone" },
+                unique: true);
         }
 
         /// <inheritdoc />
