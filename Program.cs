@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Web.Data;
+using Web.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,6 +25,8 @@ builder.Services.AddOpenApi();
 //Warning, if you change DB type you may need to go to the DB context and update the case insensitivity column settings
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.Configure<PagingSettings>(builder.Configuration.GetSection("PagingSettings"));
 
 builder.Services.AddScoped<ICustomers, Customers>();
 builder.Services.AddScoped<IDiscounts, Discounts>();

@@ -15,10 +15,9 @@ namespace Web.Data
         {
             var query = _context.Products.AsQueryable();
 
+            //Using a starts with query so that the index can be used not a table scan
             if (!string.IsNullOrEmpty(search))
-            {
-                query = query.Where(p => p.Name.Contains(search));
-            }
+                query = query.Where(p => EF.Functions.Like(p.Name, search + "%"));
 
             query = (sortBy?.ToLower()) switch
             {
@@ -29,7 +28,7 @@ namespace Web.Data
                 "saleprice"           => ascending ? query.OrderBy(p => p.SalePrice)           : query.OrderByDescending(p => p.SalePrice),
                 "qtyonhand"           => ascending ? query.OrderBy(p => p.QtyOnHand)           : query.OrderByDescending(p => p.QtyOnHand),
                 "commisionpercentage" => ascending ? query.OrderBy(p => p.CommisionPercentage) : query.OrderByDescending(p => p.CommisionPercentage),
-                _                     => query.OrderBy(p => p.ProductId),
+                _                     => query.OrderBy(p => p.Name),
             };
 
             var totalCount = await query.CountAsync();

@@ -13,9 +13,9 @@ namespace Web.Data
         public async Task<(IEnumerable<Models.SalesPerson> Items, int TotalCount)> Get(int page, int count, string? search, string? phone, string? sortBy, bool ascending)
         {
             var query = _context.SalesPersons.AsQueryable();
-
+            //Using a starts with query so that the index can be used not a table scan
             if (!string.IsNullOrEmpty(search))
-                query = query.Where(sp => sp.FirstName.Contains(search) || sp.LastName.Contains(search));
+                query = query.Where(sp => EF.Functions.Like(sp.FirstName, search + "%") || EF.Functions.Like(sp.LastName, search + "%"));
 
             if (!string.IsNullOrEmpty(phone))
                 query = query.Where(sp => sp.Phone.Contains(phone));
@@ -29,7 +29,7 @@ namespace Web.Data
                 "startdate"       => ascending ? query.OrderBy(sp => sp.StartDate)       : query.OrderByDescending(sp => sp.StartDate),
                 "terminationdate" => ascending ? query.OrderBy(sp => sp.TerminationDate) : query.OrderByDescending(sp => sp.TerminationDate),
                 "manager"         => ascending ? query.OrderBy(sp => sp.Manager)         : query.OrderByDescending(sp => sp.Manager),
-                _                 => query.OrderBy(sp => sp.SalesPersonId),
+                _                 => query.OrderBy(sp => sp.FirstName),
             };
 
             var totalCount = await query.CountAsync();

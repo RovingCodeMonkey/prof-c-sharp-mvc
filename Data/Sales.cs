@@ -10,9 +10,35 @@ namespace Web.Data
             this._context = context;
         }
 
-        public async Task<IEnumerable<Models.Sale>> Get()
+        public async Task<(IEnumerable<Models.Sale> Items, int TotalCount)> Get(int page, int count, long? productId, long? salesPersonId, long? customerId, string? sortBy, bool ascending)
         {
-            return await _context.Sales.ToListAsync();
+            var query = _context.Sales
+                .Include(s => s.Product)
+                .Include(s => s.SalesPerson)
+                .Include(s => s.Customer)
+                .AsQueryable();
+
+            if (productId.HasValue)
+                query = query.Where(s => s.ProductId == productId.Value);
+
+            if (salesPersonId.HasValue)
+                query = query.Where(s => s.SalesPersonId == salesPersonId.Value);
+
+            if (customerId.HasValue)
+                query = query.Where(s => s.CustomerId == customerId.Value);
+
+            query = (sortBy?.ToLower()) switch
+            {
+                "salesdate"     => ascending ? query.OrderBy(s => s.SalesDate)     : query.OrderByDescending(s => s.SalesDate),
+                "productid"     => ascending ? query.OrderBy(s => s.ProductId)     : query.OrderByDescending(s => s.ProductId),
+                "salespersonid" => ascending ? query.OrderBy(s => s.SalesPersonId) : query.OrderByDescending(s => s.SalesPersonId),
+                "customerid"    => ascending ? query.OrderBy(s => s.CustomerId)    : query.OrderByDescending(s => s.CustomerId),
+                _               => query.OrderBy(s => s.SalesId),
+            };
+
+            var totalCount = await query.CountAsync();
+            var items = await query.Skip(page * count).Take(count).ToListAsync();
+            return (items, totalCount);
         }
 
         public async Task<Models.Sale?> Get(int id)

@@ -6,7 +6,7 @@ namespace Web.Data
     {
         Task<Discount> Create(Discount discount);
         Task Delete(int id);
-        Task<IEnumerable<Discount>> Get();
+        Task<(IEnumerable<Discount> Items, int TotalCount)> Get(int page, int count, string? search, string? sortBy, bool ascending);
         Task<Discount?> Get(int id);
         Task Update(Discount discount);
     }
