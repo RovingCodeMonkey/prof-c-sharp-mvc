@@ -37,6 +37,19 @@ namespace Web.Data
             return (items, totalCount);
         }
 
+        public async Task<bool> ExistsWithNameAndPhone(string firstName, string lastName, string phone, long? excludeId = null)
+        {
+            var query = _context.SalesPersons.Where(sp =>
+                sp.FirstName == firstName &&
+                sp.LastName == lastName &&
+                sp.Phone == phone);
+
+            if (excludeId.HasValue)
+                query = query.Where(sp => sp.SalesPersonId != excludeId.Value);
+
+            return await query.AnyAsync();
+        }
+
         public async Task<Models.SalesPerson?> Get(int id)
         {
             return await _context.SalesPersons.Where(sp => sp.SalesPersonId == id).FirstOrDefaultAsync();
@@ -49,10 +62,13 @@ namespace Web.Data
             return salesPerson;
         }
 
-        public async Task Update(Models.SalesPerson salesPerson)
+        public async Task<bool> Update(Models.SalesPerson salesPerson)
         {
+            if (!await _context.SalesPersons.AnyAsync(sp => sp.SalesPersonId == salesPerson.SalesPersonId))
+                return false;
             _context.SalesPersons.Update(salesPerson);
             await _context.SaveChangesAsync();
+            return true;
         }
 
         public async Task Delete(int id)

@@ -16,16 +16,12 @@ namespace Web.Controllers
             [FromQuery] int count = 20,
             [FromQuery] string? search = null,
             [FromQuery] string? sortBy = null,
-            [FromQuery] bool ascending = true)
+            [FromQuery] bool ascending = true,
+            [FromQuery] bool inStockOnly = false)
         {
             count = Math.Min(count, pagingSettings.Value.MaxPageSize);
-            var (items, totalCount) = await products.Get(page, count, search, sortBy, ascending);
-            return new PagedResult<Product>
-            {
-                Items = items,
-                Count = totalCount,
-                Cursor = (page + 1) * count < totalCount ? page + 1 : null
-            };
+            var (items, totalCount) = await products.Get(page, count, search, sortBy, ascending, inStockOnly);
+            return PagedResult<Product>.Create(items, totalCount, page, count);
         }
 
         [HttpGet("{id}")]
@@ -38,6 +34,8 @@ namespace Web.Controllers
         [HttpPost]
         public async Task<ActionResult<Product>> Create(Product product)
         {
+            if (await products.ExistsWithNameAndManufacturer(product.Name, product.Manufacturer))
+                return Conflict("A product with the same name and manufacturer already exists.");
             var created = await products.Create(product);
             return CreatedAtAction(nameof(Get), new { id = created.ProductId }, created);
         }
@@ -45,7 +43,10 @@ namespace Web.Controllers
         [HttpPut]
         public async Task<IActionResult> Update(Product product)
         {
-            await products.Update(product);
+            if (await products.ExistsWithNameAndManufacturer(product.Name, product.Manufacturer, product.ProductId))
+                return Conflict("A product with the same name and manufacturer already exists.");
+            if (!await products.Update(product))
+                return NotFound();
             return NoContent();
         }
 

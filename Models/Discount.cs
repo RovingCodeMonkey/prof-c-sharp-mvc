@@ -15,7 +15,7 @@ namespace Web.Models
         [Required]
         public DateTime EndDate { get; set; }
         [Required]
-        public double DiscountPercentage { get; set; }
+        public decimal DiscountPercentage { get; set; }
 
         [ForeignKey("ProductId")]
         public virtual Product? Product { get; set; }

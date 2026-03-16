@@ -47,10 +47,13 @@ namespace Web.Data
             return customer;
         }
 
-        public async Task Update(Models.Customer customer)
+        public async Task<bool> Update(Models.Customer customer)
         {
+            if (!await _context.Customers.AnyAsync(c => c.CustomerId == customer.CustomerId))
+                return false;
             _context.Customers.Update(customer);
             await _context.SaveChangesAsync();
+            return true;
         }
 
         public async Task Delete(int id)

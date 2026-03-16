@@ -6,8 +6,9 @@ namespace Web.Data
     {
         Task<SalesPerson> Create(SalesPerson salesPerson);
         Task Delete(int id);
+        Task<bool> ExistsWithNameAndPhone(string firstName, string lastName, string phone, long? excludeId = null);
         Task<(IEnumerable<SalesPerson> Items, int TotalCount)> Get(int page, int count, string? search, string? phone, string? sortBy, bool ascending);
         Task<SalesPerson?> Get(int id);
-        Task Update(SalesPerson salesPerson);
+        Task<bool> Update(SalesPerson salesPerson);
     }
 }

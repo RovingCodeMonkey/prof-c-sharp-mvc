@@ -12,9 +12,10 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy(MyAllowSpecificOrigins, policy =>
     {
-        policy.WithOrigins(allowedOrigins) // Allow requests from this origin
-              .AllowAnyHeader()                  // Allow all headers
-              .AllowAnyMethod();                 // Allow all HTTP methods (GET, POST, etc.)
+        policy.WithOrigins(allowedOrigins)
+              .SetIsOriginAllowedToAllowWildcardSubdomains()
+              .AllowAnyHeader()
+              .AllowAnyMethod();
     });
 });
 // Add services to the container.
@@ -27,6 +28,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.Configure<PagingSettings>(builder.Configuration.GetSection("PagingSettings"));
+builder.Services.AddProblemDetails();
 
 builder.Services.AddScoped<ICustomers, Customers>();
 builder.Services.AddScoped<IDiscounts, Discounts>();
@@ -45,12 +47,13 @@ if (app.Environment.IsDevelopment())
 
 
 
+app.UseExceptionHandler();
+app.UseCors(MyAllowSpecificOrigins);
+
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
 app.MapControllers();
-
-app.UseCors(MyAllowSpecificOrigins);
 
 app.Run();

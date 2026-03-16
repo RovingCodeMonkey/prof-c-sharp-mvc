@@ -23,12 +23,7 @@ namespace Web.Controllers
         {
             count = Math.Min(count, pagingSettings.Value.MaxPageSize);
             var (items, totalCount) = await sales.Get(page, count, productId, salesPersonId, customerId, startDate, endDate, sortBy, ascending);
-            return new PagedResult<Sale>
-            {
-                Items = items,
-                Count = totalCount,
-                Cursor = (page + 1) * count < totalCount ? page + 1 : null
-            };
+            return PagedResult<Sale>.Create(items, totalCount, page, count);
         }
 
         [HttpGet("{id}")]
@@ -41,14 +36,17 @@ namespace Web.Controllers
         [HttpPost]
         public async Task<ActionResult<Sale>> Create(Sale sale)
         {
-            var created = await sales.Create(sale);
-            return CreatedAtAction(nameof(Get), new { id = created.SalesId }, created);
+            var result = await sales.Create(sale);
+            if (!result.IsSuccess)
+                return Conflict(result.Error);
+            return CreatedAtAction(nameof(Get), new { id = result.Value!.SalesId }, result.Value);
         }
 
         [HttpPut]
         public async Task<IActionResult> Update(Sale sale)
         {
-            await sales.Update(sale);
+            if (!await sales.Update(sale))
+                return NotFound();
             return NoContent();
         }
 

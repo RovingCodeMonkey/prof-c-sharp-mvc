@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System.Runtime.CompilerServices;
 
 namespace Web.Data
 {
@@ -11,13 +10,16 @@ namespace Web.Data
             this._context = context;
         }    
 
-        public async Task<(IEnumerable<Models.Product> Items, int TotalCount)> Get(int page, int count, string? search, string? sortBy, bool ascending)
+        public async Task<(IEnumerable<Models.Product> Items, int TotalCount)> Get(int page, int count, string? search, string? sortBy, bool ascending, bool inStockOnly = false)
         {
             var query = _context.Products.AsQueryable();
 
             //Using a starts with query so that the index can be used not a table scan
             if (!string.IsNullOrEmpty(search))
                 query = query.Where(p => EF.Functions.Like(p.Name, search + "%"));
+
+            if (inStockOnly)
+                query = query.Where(p => p.QtyOnHand > 0);
 
             query = (sortBy?.ToLower()) switch
             {
@@ -36,6 +38,18 @@ namespace Web.Data
             return (items, totalCount);
         }
 
+        public async Task<bool> ExistsWithNameAndManufacturer(string name, string manufacturer, long? excludeId = null)
+        {
+            var query = _context.Products.Where(p =>
+                p.Name == name &&
+                p.Manufacturer == manufacturer);
+
+            if (excludeId.HasValue)
+                query = query.Where(p => p.ProductId != excludeId.Value);
+
+            return await query.AnyAsync();
+        }
+
         public async Task<Models.Product?> Get(int id)
         {
             return await _context.Products.Where(p => p.ProductId == id).FirstOrDefaultAsync();
@@ -48,10 +62,13 @@ namespace Web.Data
             return product;
         }
 
-        public async Task Update(Models.Product product)
+        public async Task<bool> Update(Models.Product product)
         {
+            if (!await _context.Products.AnyAsync(p => p.ProductId == product.ProductId))
+                return false;
             _context.Products.Update(product);
             await _context.SaveChangesAsync();
+            return true;
         }
 
         public async Task Delete(int id)

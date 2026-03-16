@@ -1,29 +1,29 @@
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Runtime.CompilerServices;
-using Web.Data;
 
 namespace Web.Models
 {
-    [Index(nameof(Name), IsUnique = true)]
+    [Index(nameof(Name), nameof(Manufacturer), IsUnique = true)]
     public class Product
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public long ProductId { get; set; }
         [Required]
-       
+        [MaxLength(200)]
         public string Name { get; set; }
         [Required]
+        [MaxLength(200)]
         public string Manufacturer { get; set; }
         [Required]
+        [MaxLength(100)]
         public string Style { get; set; }
         [Required]
-        public double PurchasePrice { get; set; }
+        public decimal PurchasePrice { get; set; }
         [Required]
-        public double SalePrice { get; set; }
+        public decimal SalePrice { get; set; }
         public int QtyOnHand { get; set; }
-        public double CommisionPercentage { get; set; }
+        public decimal CommisionPercentage { get; set; }
     }
 }

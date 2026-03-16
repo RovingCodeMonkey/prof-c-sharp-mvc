@@ -11,7 +11,7 @@ using Web.Data;
 namespace Web.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260315171544_Initial")]
+    [Migration("20260316011843_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -86,7 +86,7 @@ namespace Web.Migrations
 
                     b.Property<string>("Manufacturer")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("TEXT COLLATE NOCASE");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -107,7 +107,7 @@ namespace Web.Migrations
 
                     b.HasKey("ProductId");
 
-                    b.HasIndex("Name")
+                    b.HasIndex("Name", "Manufacturer")
                         .IsUnique();
 
                     b.ToTable("Products");
@@ -119,11 +119,26 @@ namespace Web.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<double>("AppliedDiscount")
+                        .HasColumnType("REAL");
+
+                    b.Property<double>("Commision")
+                        .HasColumnType("REAL");
+
+                    b.Property<double>("CommisionPercentage")
+                        .HasColumnType("REAL");
+
                     b.Property<long>("CustomerId")
                         .HasColumnType("INTEGER");
 
+                    b.Property<double>("FinalPrice")
+                        .HasColumnType("REAL");
+
                     b.Property<long>("ProductId")
                         .HasColumnType("INTEGER");
+
+                    b.Property<double>("SalePrice")
+                        .HasColumnType("REAL");
 
                     b.Property<DateTime>("SalesDate")
                         .HasColumnType("TEXT");
@@ -171,7 +186,7 @@ namespace Web.Migrations
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime>("TerminationDate")
+                    b.Property<DateTime?>("TerminationDate")
                         .HasColumnType("TEXT");
 
                     b.HasKey("SalesPersonId");

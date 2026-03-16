@@ -19,6 +19,9 @@ public class AppDbContext : DbContext
             modelBuilder.Entity<Product>()
                 .Property(e => e.Name)
                 .HasColumnType("TEXT COLLATE NOCASE"); //
+            modelBuilder.Entity<Product>()
+                .Property(e => e.Manufacturer)
+                .HasColumnType("TEXT COLLATE NOCASE"); //
             modelBuilder.Entity<Customer>()
                 .Property(e => e.FirstName)
                 .HasColumnType("TEXT COLLATE NOCASE"); //
@@ -33,6 +36,9 @@ public class AppDbContext : DbContext
               .HasColumnType("TEXT COLLATE NOCASE"); //
             modelBuilder.Entity<SalesPerson>()
               .Property(e => e.Manager)
+              .HasColumnType("TEXT COLLATE NOCASE"); //
+            modelBuilder.Entity<SalesPerson>()
+              .Property(e => e.Phone)
               .HasColumnType("TEXT COLLATE NOCASE"); //
         }
 

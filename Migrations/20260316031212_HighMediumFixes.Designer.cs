@@ -11,8 +11,8 @@ using Web.Data;
 namespace Web.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260315205745_ExtendSales")]
-    partial class ExtendSales
+    [Migration("20260316031212_HighMediumFixes")]
+    partial class HighMediumFixes
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -27,19 +27,22 @@ namespace Web.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Address")
-                        .IsRequired()
+                        .HasMaxLength(500)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
+                        .HasMaxLength(100)
                         .HasColumnType("TEXT COLLATE NOCASE");
 
                     b.Property<string>("LastName")
                         .IsRequired()
+                        .HasMaxLength(100)
                         .HasColumnType("TEXT COLLATE NOCASE");
 
                     b.Property<string>("Phone")
                         .IsRequired()
+                        .HasMaxLength(30)
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("StartDate")
@@ -59,8 +62,8 @@ namespace Web.Migrations
                     b.Property<DateTime>("BeginDate")
                         .HasColumnType("TEXT");
 
-                    b.Property<double>("DiscountPercentage")
-                        .HasColumnType("REAL");
+                    b.Property<decimal>("DiscountPercentage")
+                        .HasColumnType("TEXT");
 
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("TEXT");
@@ -81,33 +84,36 @@ namespace Web.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<double>("CommisionPercentage")
-                        .HasColumnType("REAL");
+                    b.Property<decimal>("CommisionPercentage")
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Manufacturer")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasMaxLength(200)
+                        .HasColumnType("TEXT COLLATE NOCASE");
 
                     b.Property<string>("Name")
                         .IsRequired()
+                        .HasMaxLength(200)
                         .HasColumnType("TEXT COLLATE NOCASE");
 
-                    b.Property<double>("PurchasePrice")
-                        .HasColumnType("REAL");
+                    b.Property<decimal>("PurchasePrice")
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("QtyOnHand")
                         .HasColumnType("INTEGER");
 
-                    b.Property<double>("SalePrice")
-                        .HasColumnType("REAL");
+                    b.Property<decimal>("SalePrice")
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Style")
                         .IsRequired()
+                        .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
                     b.HasKey("ProductId");
 
-                    b.HasIndex("Name")
+                    b.HasIndex("Name", "Manufacturer")
                         .IsUnique();
 
                     b.ToTable("Products");
@@ -119,20 +125,26 @@ namespace Web.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<double>("AppliedDiscount")
-                        .HasColumnType("REAL");
+                    b.Property<decimal>("AppliedDiscount")
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("Commision")
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("CommisionPercentage")
+                        .HasColumnType("TEXT");
 
                     b.Property<long>("CustomerId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<double>("FinalPrice")
-                        .HasColumnType("REAL");
+                    b.Property<decimal>("FinalPrice")
+                        .HasColumnType("TEXT");
 
                     b.Property<long>("ProductId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<double>("SalePrice")
-                        .HasColumnType("REAL");
+                    b.Property<decimal>("SalePrice")
+                        .HasColumnType("TEXT");
 
                     b.Property<DateTime>("SalesDate")
                         .HasColumnType("TEXT");
@@ -158,24 +170,27 @@ namespace Web.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Address")
-                        .IsRequired()
+                        .HasMaxLength(500)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
+                        .HasMaxLength(100)
                         .HasColumnType("TEXT COLLATE NOCASE");
 
                     b.Property<string>("LastName")
                         .IsRequired()
+                        .HasMaxLength(100)
                         .HasColumnType("TEXT COLLATE NOCASE");
 
                     b.Property<string>("Manager")
-                        .IsRequired()
+                        .HasMaxLength(200)
                         .HasColumnType("TEXT COLLATE NOCASE");
 
                     b.Property<string>("Phone")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasMaxLength(30)
+                        .HasColumnType("TEXT COLLATE NOCASE");
 
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("TEXT");
@@ -194,7 +209,7 @@ namespace Web.Migrations
             modelBuilder.Entity("Web.Models.Discount", b =>
                 {
                     b.HasOne("Web.Models.Product", "Product")
-                        .WithMany("Discounts")
+                        .WithMany()
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -227,11 +242,6 @@ namespace Web.Migrations
                     b.Navigation("Product");
 
                     b.Navigation("SalesPerson");
-                });
-
-            modelBuilder.Entity("Web.Models.Product", b =>
-                {
-                    b.Navigation("Discounts");
                 });
 #pragma warning restore 612, 618
         }

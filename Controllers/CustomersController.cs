@@ -20,12 +20,7 @@ namespace Web.Controllers
         {
             count = Math.Min(count, pagingSettings.Value.MaxPageSize);
             var (items, totalCount) = await customers.Get(page, count, search, phone, sortBy, ascending);
-            return new PagedResult<Customer>
-            {
-                Items = items,
-                Count = totalCount,
-                Cursor = (page + 1) * count < totalCount ? page + 1 : null
-            };
+            return PagedResult<Customer>.Create(items, totalCount, page, count);
         }
 
         [HttpGet("{id}")]
@@ -45,7 +40,8 @@ namespace Web.Controllers
         [HttpPut]
         public async Task<IActionResult> Update(Customer customer)
         {
-            await customers.Update(customer);
+            if (!await customers.Update(customer))
+                return NotFound();
             return NoContent();
         }
 

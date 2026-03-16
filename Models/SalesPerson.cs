@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Xml.Linq;
 
 namespace Web.Models
 {
@@ -12,17 +11,20 @@ namespace Web.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public long SalesPersonId { get; set; }
         [Required]
+        [MaxLength(100)]
         public string FirstName { get; set; }
         [Required]
-        public string LastName { get; set; } 
-        public string Address { get; set; }
+        [MaxLength(100)]
+        public string LastName { get; set; }
+        [MaxLength(500)]
+        public string? Address { get; set; }
         [Required]
+        [MaxLength(30)]
         public string Phone { get; set; }
         [Required]
         public DateTime StartDate { get; set; }
         public DateTime? TerminationDate { get; set; }
-
-        public string Manager { get; set; }
-
+        [MaxLength(200)]
+        public string? Manager { get; set; }
     }
 }

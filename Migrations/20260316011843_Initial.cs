@@ -35,7 +35,7 @@ namespace Web.Migrations
                     ProductId = table.Column<long>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     Name = table.Column<string>(type: "TEXT COLLATE NOCASE", nullable: false),
-                    Manufacturer = table.Column<string>(type: "TEXT", nullable: false),
+                    Manufacturer = table.Column<string>(type: "TEXT COLLATE NOCASE", nullable: false),
                     Style = table.Column<string>(type: "TEXT", nullable: false),
                     PurchasePrice = table.Column<double>(type: "REAL", nullable: false),
                     SalePrice = table.Column<double>(type: "REAL", nullable: false),
@@ -58,7 +58,7 @@ namespace Web.Migrations
                     Address = table.Column<string>(type: "TEXT", nullable: false),
                     Phone = table.Column<string>(type: "TEXT", nullable: false),
                     StartDate = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    TerminationDate = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    TerminationDate = table.Column<DateTime>(type: "TEXT", nullable: true),
                     Manager = table.Column<string>(type: "TEXT COLLATE NOCASE", nullable: false)
                 },
                 constraints: table =>
@@ -97,6 +97,11 @@ namespace Web.Migrations
                     ProductId = table.Column<long>(type: "INTEGER", nullable: false),
                     SalesPersonId = table.Column<long>(type: "INTEGER", nullable: false),
                     CustomerId = table.Column<long>(type: "INTEGER", nullable: false),
+                    SalePrice = table.Column<double>(type: "REAL", nullable: false),
+                    AppliedDiscount = table.Column<double>(type: "REAL", nullable: false),
+                    FinalPrice = table.Column<double>(type: "REAL", nullable: false),
+                    CommisionPercentage = table.Column<double>(type: "REAL", nullable: false),
+                    Commision = table.Column<double>(type: "REAL", nullable: false),
                     SalesDate = table.Column<DateTime>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
@@ -128,9 +133,9 @@ namespace Web.Migrations
                 column: "ProductId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Products_Name",
+                name: "IX_Products_Name_Manufacturer",
                 table: "Products",
-                column: "Name",
+                columns: new[] { "Name", "Manufacturer" },
                 unique: true);
 
             migrationBuilder.CreateIndex(

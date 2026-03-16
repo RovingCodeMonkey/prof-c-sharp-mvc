@@ -8,6 +8,6 @@ namespace Web.Data
         Task Delete(int id);
         Task<(IEnumerable<Customer> Items, int TotalCount)> Get(int page, int count, string? search, string? phone, string? sortBy, bool ascending);
         Task<Customer?> Get(int id);
-        Task Update(Customer customer);
+        Task<bool> Update(Customer customer);
     }
 }

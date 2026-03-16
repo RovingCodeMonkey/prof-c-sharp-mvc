@@ -6,8 +6,9 @@ namespace Web.Data
     {
         Task<Product> Create(Product product);
         Task Delete(int id);
-        Task<(IEnumerable<Product> Items, int TotalCount)> Get(int page, int count, string? search, string? sortBy, bool ascending);
+        Task<bool> ExistsWithNameAndManufacturer(string name, string manufacturer, long? excludeId = null);
+        Task<(IEnumerable<Product> Items, int TotalCount)> Get(int page, int count, string? search, string? sortBy, bool ascending, bool inStockOnly = false);
         Task<Product?> Get(int id);
-        Task Update(Product product);
+        Task<bool> Update(Product product);
     }
 }

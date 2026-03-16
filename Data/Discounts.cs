@@ -51,10 +51,13 @@ namespace Web.Data
             return discount;
         }
 
-        public async Task Update(Models.Discount discount)
+        public async Task<bool> Update(Models.Discount discount)
         {
+            if (!await _context.Discounts.AnyAsync(d => d.DiscountId == discount.DiscountId))
+                return false;
             _context.Discounts.Update(discount);
             await _context.SaveChangesAsync();
+            return true;
         }
 
         public async Task Delete(int id)

@@ -15,10 +15,12 @@ namespace Web.Models
         [Required]
         public long CustomerId { get; set; }
         [Required]
-        public double SalePrice { get; set; }
-        public double AppliedDiscount { get; set; }
+        public decimal SalePrice { get; set; }
+        public decimal AppliedDiscount { get; set; }
         [Required]
-        public double FinalPrice { get; set; }
+        public decimal FinalPrice { get; set; }
+        public decimal CommisionPercentage { get; set; }
+        public decimal Commision { get; set; }
         [Required]
         public DateTime SalesDate { get; set; }
 

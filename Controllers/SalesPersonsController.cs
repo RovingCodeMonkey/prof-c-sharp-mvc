@@ -20,12 +20,7 @@ namespace Web.Controllers
         {
             count = Math.Min(count, pagingSettings.Value.MaxPageSize);
             var (items, totalCount) = await salesPersons.Get(page, count, search, phone, sortBy, ascending);
-            return new PagedResult<SalesPerson>
-            {
-                Items = items,
-                Count = totalCount,
-                Cursor = (page + 1) * count < totalCount ? page + 1 : null
-            };
+            return PagedResult<SalesPerson>.Create(items, totalCount, page, count);
         }
 
         [HttpGet("{id}")]
@@ -38,6 +33,8 @@ namespace Web.Controllers
         [HttpPost]
         public async Task<ActionResult<SalesPerson>> Create(SalesPerson salesPerson)
         {
+            if (await salesPersons.ExistsWithNameAndPhone(salesPerson.FirstName, salesPerson.LastName, salesPerson.Phone))
+                return Conflict("A salesperson with the same first name, last name, and phone already exists.");
             var created = await salesPersons.Create(salesPerson);
             return CreatedAtAction(nameof(Get), new { id = created.SalesPersonId }, created);
         }
@@ -45,7 +42,10 @@ namespace Web.Controllers
         [HttpPut]
         public async Task<IActionResult> Update(SalesPerson salesPerson)
         {
-            await salesPersons.Update(salesPerson);
+            if (await salesPersons.ExistsWithNameAndPhone(salesPerson.FirstName, salesPerson.LastName, salesPerson.Phone, salesPerson.SalesPersonId))
+                return Conflict("A salesperson with the same first name, last name, and phone already exists.");
+            if (!await salesPersons.Update(salesPerson))
+                return NotFound();
             return NoContent();
         }
 

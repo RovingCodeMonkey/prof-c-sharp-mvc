@@ -19,12 +19,7 @@ namespace Web.Controllers
         {
             count = Math.Min(count, pagingSettings.Value.MaxPageSize);
             var (items, totalCount) = await discounts.Get(page, count, search, sortBy, ascending);
-            return new PagedResult<Discount>
-            {
-                Items = items,
-                Count = totalCount,
-                Cursor = (page + 1) * count < totalCount ? page + 1 : null
-            };
+            return PagedResult<Discount>.Create(items, totalCount, page, count);
         }
 
         [HttpGet("available")]
@@ -52,7 +47,8 @@ namespace Web.Controllers
         [HttpPut]
         public async Task<IActionResult> Update(Discount discount)
         {
-            await discounts.Update(discount);
+            if (!await discounts.Update(discount))
+                return NotFound();
             return NoContent();
         }
 
